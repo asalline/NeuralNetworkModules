@@ -18,9 +18,15 @@ class DoubleConvAndReLU(nn.Module):
         self.padding = padding
 
         self.double_conv_and_ReLU = nn.Sequential(
-            nn.Conv2d(in_channels=self.in_channels, out_channels=self.out_channels, kernel_size=self.kernel_size, padding=self.padding),
+            nn.Conv2d(in_channels=self.in_channels, 
+                      out_channels=self.out_channels, 
+                      kernel_size=self.kernel_size, 
+                      padding=self.padding),
             nn.ReLU(),
-            nn.Conv2d(in_channels=self.out_channels, out_channels=self.out_channels, kernel_size=self.kernel_size, padding=self.padding),
+            nn.Conv2d(in_channels=self.out_channels, 
+                      out_channels=self.out_channels, 
+                      kernel_size=self.kernel_size, 
+                      padding=self.padding),
             nn.ReLU()
         )
 
@@ -58,22 +64,48 @@ class UNet(nn.Module):
         
         for k in range(self.depth):
             if k == 0:
-                self.encoder_block_convs.append(DoubleConvAndReLU(self.in_channels, 64, self.conv_kernel_size, padding=self.padding))
-                self.decoder_block_convs.append(DoubleConvAndReLU(self.out_channels, int(self.out_channels / 2), self.conv_kernel_size, padding=self.padding))
-                self.up_convolutions.append(nn.ConvTranspose2d(self.out_channels, int(self.out_channels / 2), self.up_conv_kernel_size, stride=2, padding=0))
-                self.max_pools.append(nn.MaxPool2d(self.max_pool_kernel_size))
+                self.encoder_block_convs.append(DoubleConvAndReLU(in_channels = self.in_channels, 
+                                                                  out_channels=64, 
+                                                                  kernel_size=self.conv_kernel_size, 
+                                                                  padding=self.padding))
+                self.decoder_block_convs.append(DoubleConvAndReLU(in_channels=self.out_channels, 
+                                                                  out_channels=int(self.out_channels / 2), 
+                                                                  kernel_size=self.conv_kernel_size, 
+                                                                  padding=self.padding))
+                self.up_convolutions.append(nn.ConvTranspose2d(in_channels=self.out_channels, 
+                                                               out_channels=int(self.out_channels / 2), 
+                                                               kernel_size=self.up_conv_kernel_size, 
+                                                               stride=2, 
+                                                               padding=0))
+                self.max_pools.append(nn.MaxPool2d(kernel_size=self.max_pool_kernel_size))
                 self.out_channels = int(self.out_channels / 2)
                 self.in_channels = 64
             elif k < self.depth-1:
-                self.encoder_block_convs.append(DoubleConvAndReLU(self.in_channels, int(self.in_channels * 2), self.conv_kernel_size, padding=self.padding))
-                self.decoder_block_convs.append(DoubleConvAndReLU(self.out_channels, int(self.out_channels / 2), self.conv_kernel_size, padding=self.padding))
-                self.up_convolutions.append(nn.ConvTranspose2d(self.out_channels, int(self.out_channels / 2), self.up_conv_kernel_size, stride=2, padding=0))
-                self.max_pools.append(nn.MaxPool2d(self.max_pool_kernel_size))
+                self.encoder_block_convs.append(DoubleConvAndReLU(in_channels=self.in_channels, 
+                                                                  out_channels=int(self.in_channels * 2), 
+                                                                  kernel_size=self.conv_kernel_size, 
+                                                                  padding=self.padding))
+                self.decoder_block_convs.append(DoubleConvAndReLU(in_channels=self.out_channels, 
+                                                                  out_channels=int(self.out_channels / 2), 
+                                                                  kernel_size=self.conv_kernel_size, 
+                                                                  padding=self.padding))
+                self.up_convolutions.append(nn.ConvTranspose2d(in_channels=self.out_channels, 
+                                                               out_channels=int(self.out_channels / 2), 
+                                                               kernel_size=self.up_conv_kernel_size, 
+                                                               stride=2, 
+                                                               padding=0))
+                self.max_pools.append(nn.MaxPool2d(kernel_size=self.max_pool_kernel_size))
                 self.in_channels = int(self.in_channels * 2)
                 self.out_channels = int(self.out_channels / 2)
             else:
-                self.encoder_block_convs.append(DoubleConvAndReLU(self.in_channels, int(self.in_channels * 2), self.conv_kernel_size, padding=self.padding))
-                self.decoder_block_convs.append(nn.Conv2d(self.out_channels, 1, self.conv_kernel_size, padding=self.padding))
+                self.encoder_block_convs.append(DoubleConvAndReLU(in_channels=self.in_channels, 
+                                                                  out_channels=int(self.in_channels * 2), 
+                                                                  kernel_size=self.conv_kernel_size, 
+                                                                  padding=self.padding))
+                self.decoder_block_convs.append(nn.Conv2d(in_channels=self.out_channels, 
+                                                          out_channels=1, 
+                                                          kernel_size=self.conv_kernel_size, 
+                                                          padding=self.padding))
 
     def forward(self, 
                 input_tensor:torch.Tensor) -> torch.Tensor:
