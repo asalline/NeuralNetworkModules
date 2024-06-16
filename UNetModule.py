@@ -5,11 +5,12 @@ class DoubleConvAndReLU(nn.Module):
     '''
     Class for double convolutions (2D) and ReLUs that are used in the standard U-Net architecture.
     '''
-    def __init__(self, 
-                 in_channels:int, 
-                 out_channels:int, 
-                 kernel_size:tuple, 
-                 padding:int) -> None:
+    def __init__(
+        self, 
+        in_channels:int, 
+        out_channels:int, 
+        kernel_size:tuple, 
+        padding:int) -> None:
         super().__init__()
 
         self.in_channels = in_channels
@@ -38,14 +39,15 @@ class UNet(nn.Module):
     The U-Net architecture module. Very generalized and gives a modularity for the depth.
     This version goes from one input channel to 64 in the first convolution.
     '''
-    def __init__(self, 
-                in_channels:int,
-                out_channels:int, depth:int,
-                conv_kernel_size:tuple, 
-                max_pool_kernel_size:tuple, 
-                up_conv_kernel_size:tuple, 
-                padding:int, 
-                skip_connection_list:list) -> None:
+    def __init__(
+        self, 
+        in_channels:int,
+        out_channels:int, depth:int,
+        conv_kernel_size:tuple, 
+        max_pool_kernel_size:tuple, 
+        up_conv_kernel_size:tuple, 
+        padding:int, 
+        skip_connection_list:list) -> None:
         super().__init__()
 
         self.in_channels = in_channels
@@ -107,8 +109,9 @@ class UNet(nn.Module):
                                                           kernel_size=self.conv_kernel_size, 
                                                           padding=self.padding))
 
-    def forward(self, 
-                input_tensor:torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, 
+        input_tensor:torch.Tensor) -> torch.Tensor:
         
         residual_connection_tensor = input_tensor.clone()
 
